@@ -1,21 +1,36 @@
-/*
- * Adopted from Head first Design book, page 238-240
- */
+#include <iostream>
+using namespace std;
+class PayPal {
 
-#include "MallardDuck.hpp"
-#include "WildTurkey.hpp"
-#include "TurkeyAdapter.hpp"
-#include "Duck.hpp"
+public:
+   void sendPayment(int amount) {
+        // Paying via Paypal //
+        cout<<"Paying via PayPal: "<<amount;
+    }
+};
 
+class PaymentAdapter {
+public:
+    virtual void pay(int amount)=0;
+};
 
-int main() {
-	MallardDuck* duck = new MallardDuck();
+class PaypalAdapter : public PaymentAdapter {
 
-	WildTurkey* turkey = new WildTurkey();
-	Duck* turkeyAdapter = new TurkeyAdapter(turkey);
+private:
+    PayPal* paypal;
 
-	turkeyAdapter->quack();
-	turkeyAdapter->fly();
+public:
+    PaypalAdapter(PayPal *paypal) {
+        this->paypal = paypal;
+    }
 
-	return 0;
+    void pay(int amount) {
+        this->paypal->sendPayment(amount);
+    }
+};
+int main(){
+    PaypalAdapter paypal= new PaypalAdapter(new PayPal());
+    paypal.pay(2629);
 }
+
+

@@ -76,9 +76,7 @@ private:
 int main() {
 
     ConcreteMediator* mediator = new ConcreteMediator();
-
     ConcreteColleague1* colleague1 = new ConcreteColleague1( mediator );
-
     ConcreteColleague2* colleague2 = new ConcreteColleague2( mediator );
     ConcreteColleague2* colleague3 = new ConcreteColleague2( mediator );
 

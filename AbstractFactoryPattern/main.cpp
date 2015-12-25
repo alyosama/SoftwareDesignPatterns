@@ -1,7 +1,10 @@
 #include <iostream>
 using namespace std;
 
-class SmartPhone {};
+class SmartPhone {
+   private:
+    int value;
+};
 class NoneSmartPhone {};
 
 class Nokia1100 : public NoneSmartPhone {
