@@ -1,114 +1,127 @@
-/*
- * Adopted from http://www.cppblog.com/converse/archive/2006/08/05/10858.html
- */
-
+#include <cstring>
 #include <iostream>
 #include <list>
 #include <algorithm>
 using namespace std;
 
-typedef int STATE;
-
-class Observer;
-
-// Subject Interface (Observable)
-class Subject {
+class Observer
+{
 public:
-        Subject()
-                :_subjectState( -1 ) {
-                }
-
-        void notify();
-
-        void attach( Observer* observer ) {
-                cout << "attach an Observer" << endl;
-                _listObserver.push_back( observer );
-        }
-
-        void detach( Observer* observer ) {
-                list<Observer*>::iterator iter;
-                iter = find( _listObserver.begin(), _listObserver.end(), observer );
-
-                if ( _listObserver.end() != iter ) {
-                        _listObserver.erase( iter );
-                }
-                cout << "detach and Observer" << endl;
-        }
-
-        virtual void setState( STATE state ) {
-                cout << "setState by subject" << endl;
-                _subjectState = state;
-        }
-
-        virtual STATE getState() {
-                cout << "getState by subject" << endl;
-                return _subjectState;
-        }
-
-protected:
-        STATE _subjectState;
-        list<Observer*> _listObserver;
+    Observer(void);
+    virtual void update( Customer *myCust)= 0;
+public:
+    ~Observer(void);
 };
 
 
-
-class Observer {
-public:
-        virtual void update( Subject* subject ) = 0;
-protected:
-        STATE _observerState;
-};
-
-class ConcreteSubject : public Subject {
-public:
-        virtual void setState( STATE state ) {
-                cout << "setState by ConcreteSubject" << endl;
-                _subjectState = state;
-        }
-
-        virtual STATE getState() {
-                cout << "getState by ConcreteSubject" << endl;
-                return _subjectState;
-        }
-};
-
-class ConcreteObserver : public Observer {
-public:
-        virtual void update( Subject* subject ) {
-                if ( NULL == subject )
-                        return;
-                _observerState = subject->getState();
-                cout << "the ObserverState is " << _observerState << endl;
-        }
-};
-
-void Subject::notify() {
-        cout << "notify observer's state" << endl;
-
-        list<Observer*>::iterator iter1, iter2;
-        for ( iter1 = _listObserver.begin(), iter2 = _listObserver.end();
-                        iter1 != iter2;
-                        ++iter1 ) {
-                (*iter1)->update( this );
-        }
+Observer::Observer(void)
+{
 }
 
-int main() {
+Observer::~Observer(void)
+{
+}
 
-        Observer* observer1 = new ConcreteObserver();
-        Observer* observer2 = new ConcreteObserver();
 
-        Subject* subject = new ConcreteSubject();
+class Customer
+{
+public:
+    Customer(void);
 
-        subject->attach( observer1 );
-        subject->attach( observer2 );
+    void attach( Observer *myObserver);
+    void detach( Observer *myObserver);
+    string* getState();
+    void notifyObs();
+private:
+    vector myObs;
+public:
+    ~Customer(void);
+};
 
-        subject->setState( 4 );
-        subject->notify();
+Customer::Customer(void)
+{
+}
 
-        subject->detach( observer1 );
-        subject->setState( 10 );
-        subject->notify();
+Customer::~Customer(void)
+{
+}
 
-        return 0;
+void Customer::attach( Observer *myObserver)
+{
+    myObs.push_back( myObserver);
+}
+
+void Customer::detach( Observer *myObserver)
+{
+    for (int i= 0; i< myObs.size(); i++)
+    {
+        if (myObs[i]== myObserver)
+        {
+            myObs.erase(myObs.begin()+i);
+            return;
+        }
+    }
+}
+
+void Customer::notifyObs()
+{
+    // set arg to something that helps
+    // tell the Observers what happened
+    for (int i= 0; i< myObs.size(); i++)
+    {
+        myObs[i]->update(this);
+    }
+}
+
+string* Customer::getState()
+{
+    string *state= new string;
+
+    // set state
+
+    return 0l;
+}
+
+class AddrVerification : public Observer
+{
+public:
+    AddrVerification(void);
+    void update( Customer *myCust);
+public:
+    ~AddrVerification(void);
+};
+
+AddrVerification::AddrVerification(void)
+{
+}
+
+AddrVerification::~AddrVerification(void)
+{
+}
+
+void AddrVerification::update ( Customer *myCust)
+{
+}
+
+class WelcomeLetter : public Observer
+{
+public:
+    WelcomeLetter(void);
+    void update( Customer *myCust);
+public:
+    ~WelcomeLetter(void);
+};
+
+
+WelcomeLetter::WelcomeLetter(void)
+{
+}
+
+WelcomeLetter::~WelcomeLetter(void)
+{
+}
+
+void WelcomeLetter::update( Customer *myCust)
+{
+
 }
