@@ -1,7 +1,3 @@
-/*
- * Adopted from http://java.dzone.com/articles/design-patterns-bridge
- */
-
 #include <iostream>
 using namespace std;
 

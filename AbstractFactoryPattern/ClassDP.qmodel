@@ -19,32 +19,6 @@
           <qlist>
            <item>
             <handle>
-             <uid>{d62b5c1b-2a77-44b2-a61b-5b33b0c4061e}</uid>
-             <target>
-              <instance type="MCanvasDiagram">
-               <MCanvasDiagram>
-                <base-MDiagram>
-                 <MDiagram>
-                  <base-MObject>
-                   <MObject>
-                    <base-MElement>
-                     <MElement>
-                      <uid>{d62b5c1b-2a77-44b2-a61b-5b33b0c4061e}</uid>
-                     </MElement>
-                    </base-MElement>
-                    <name>ClassDP</name>
-                   </MObject>
-                  </base-MObject>
-                  <last-modified>1450720315274</last-modified>
-                 </MDiagram>
-                </base-MDiagram>
-               </MCanvasDiagram>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
              <uid>{092811f0-9f41-48e3-ba9a-cd8e25e474c4}</uid>
              <target>
               <instance type="MPackage">
@@ -91,6 +65,28 @@
                             </qlist>
                            </members>
                           </MClass>
+                         </instance>
+                        </target>
+                       </handle>
+                      </item>
+                      <item>
+                       <handle>
+                        <uid>{283d6af2-8aec-4ee1-a603-92799755b57a}</uid>
+                        <target>
+                         <instance type="MComponent">
+                          <MComponent>
+                           <base-MObject>
+                            <MObject>
+                             <base-MElement>
+                              <MElement>
+                               <uid>{283d6af2-8aec-4ee1-a603-92799755b57a}</uid>
+                               <flags>1</flags>
+                              </MElement>
+                             </base-MElement>
+                             <name>Main</name>
+                            </MObject>
+                           </base-MObject>
+                          </MComponent>
                          </instance>
                         </target>
                        </handle>

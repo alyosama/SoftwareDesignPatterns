@@ -1,7 +1,3 @@
-/*
- * Adopted from http://advancedcppwithexamples.blogspot.de/2010/10/c-example-of-flyweight-design-pattern.html
- */
-
 #include <iostream>
 #include <string>
 #include <map>

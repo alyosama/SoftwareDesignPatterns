@@ -1,83 +1,98 @@
-#include <iostream>
-#include <algorithm>
-#include <list>
+#include<iostream>
+#include <cstring>
 using namespace std;
+class Component
+{
+  public:
+    Component(std::string name, double salary)
+          : m_fullName(name), m_valueSalary (salary) {}
 
-class Component {
-public:
-    virtual void operation() = 0;
-
-    virtual void add( Component* child ) { }
-    virtual void remove( Component* child ) { }
-    virtual Component* getChild( int index ) { return NULL; }
+    virtual void printSalary(int level) = 0;
+    std::string            m_fullName;
+    double                 m_valueSalary;
 };
 
-class Leaf : public Component {
-public:
-    virtual void operation() {
-        cout << "Operation by leaf" << endl;
+/** "Leaf" */
+class Worker : public Component
+{
+  public:
+    Worker(std::string name , double salary): Component(name,salary)
+    {
+    }
+    void printSalary(int level)
+    {
+        for(int j=0; j < level; ++j) cout << "\t";
+        cout << "Worker : " <<
+            m_fullName.c_str() << ",salary: " <<
+            m_valueSalary << "$\n";
     }
 };
 
-class Composite : public Component {
-public:
-
-    virtual void add( Component* child ) {
-        _components.push_back( child );
+/** "Composite" */
+class Manager: public Component
+{
+  public:
+    Manager(std::string name , double salary) : Component(name,salary)
+    {
     }
+    void add(Component *cmp)
+    {
+        m_children.push_back(cmp);
+    }
+    void printSalary(int level)
+    {
+        for(int j=0; j < level; ++j) cout << "\t";
+        cout << "Manager : " <<  this->m_fullName.c_str() <<
+            ",salary: " << m_valueSalary << "$\n";
 
-    virtual void remove( Component* child ) {
-        list<Component*>::iterator iter;
-        iter = find( _components.begin(), _components.end(), child);
-
-        if ( _components.end() != iter ) {
-            _components.erase( iter );
+        if(!m_children.empty())
+        {
+            for(int x=0; x < level; ++x) cout << "\t";
+            cout << "Subordinates  of " <<
+                m_fullName.c_str() << ":\n";
+            ++level;
+            for (int i = 0; i < m_children.size(); ++i)
+              m_children[i]->printSalary(level);
         }
     }
 
-    virtual Component* getChild( int index ) {
-        list<Component*>::iterator iter1, iter2;
-        int i;
-        for ( i = 1, iter1 = _components.begin(), iter2 = _components.end();
-                iter1 != iter2;
-                ++iter1, ++i) {
-            if ( i == index )
-                break;
-        }
-
-        return *iter1;
-    }
-
-    virtual void operation() {
-        cout << "Operation by Composite" << endl;
-        list<Component*>::iterator iter1, iter2;
-
-        for( iter1 = _components.begin(), iter2 = _components.end();
-                iter1 != iter2;
-                ++iter1) {
-            (*iter1)->operation();
-        }
-    }
-
-private:
-    list<Component*> _components;
+   private:
+    vector < Component * > m_children;
 };
 
-int main() {
-    Leaf* leaf1 = new Leaf();
-    Leaf* leaf2 = new Leaf();
+int main()
+{
+    Manager president ("X", 1000000.0);
 
-    Composite* composite = new Composite();
-    composite->add( leaf1 );
-    composite->add( leaf2 );
-    Composite* composite2 = new Composite();
-    composite2->add( new Leaf() );
-    composite2->add( new Leaf() );
-    composite2->add( new Leaf() );
-    composite2->add( new Leaf() );
-    composite->add( composite2 );
+    Manager manager_production_department ("Y",400000.0);
+    Manager manager_engineering_department ("Z",400000.0);
+    Manager manager_quality_control_department ("A",280000.0);
+    Manager manager_sales_management_division ("B",270000.0);
+    Manager manager_general_affairs_department ("C" ,200000.0);
 
-    composite->operation();
+    Manager team_leader_RandD ("D", 250000.0);
+    Manager team_leader_QA ("E", 200000.0);
 
+    Worker software_developer1 ("F", 200000.0);
+    Worker software_developer2 ("G", 240000.0);
+    Worker tester ("H", 130000.0);
 
+    president.add(&manager_production_department);
+    president.add(&manager_engineering_department);
+    president.add(&manager_quality_control_department);
+    president.add(&manager_sales_management_division);
+    president.add(&manager_general_affairs_department );
+
+    manager_engineering_department.add(&team_leader_RandD);
+    manager_engineering_department.add(&team_leader_QA );
+
+    team_leader_RandD.add(&software_developer1);
+    team_leader_RandD.add(&software_developer2);
+
+    team_leader_QA.add(&tester);
+
+    cout << "The hierarchy of the company,\ni.e. president and all who is under his supervision :\n\n" ;
+    president.printSalary(0);
+
+    cout << '\n';
 }

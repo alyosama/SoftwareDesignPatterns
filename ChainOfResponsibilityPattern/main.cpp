@@ -1,57 +1,66 @@
-/*
- * Adopted from http://www.cppblog.com/converse/archive/2006/07/28/10663.html
- */
+#include<iostream>
 
-#include <iostream>
 using namespace std;
 
-class Handler {
-public:
-    Handler( Handler* successor = NULL )
-        :_successor( successor ) {
-    }
+const int FRONT_END_HELP = 0;
+const int INTERMEDIATE_LAYER_HELP = 1;
+const int GENERAL_HELP = 2;
 
-    virtual void handleRequest() = 0;
-protected:
-    Handler* _successor;
+class HelpInterface
+{
+public:
+    virtual void getHelp(int iHelpConstant) = 0;
 };
 
-class ConcreteHandler1 : public Handler {
-public:
-    ConcreteHandler1( Handler* successor = NULL )
-        :Handler( successor ) {
-    }
+class FrontEnd : public HelpInterface {
+    HelpInterface * Successor;
 
-    virtual void handleRequest() {
-        if ( NULL != _successor ) {
-            _successor->handleRequest();
-        } else {
-            cout << "handleRequest by ConcreteHandler1" << endl;
-        }
+public:
+        FrontEnd(HelpInterface * s){ Successor = s;}
+        void getHelp(int iHelpConstant);
+};
+
+void FrontEnd::getHelp(int iHelpConstant)
+{
+    if (FRONT_END_HELP == iHelpConstant)    {
+        cout<<"This is the front end, don't you like it ?\n"<<endl;
+    } else {
+        Successor->getHelp(iHelpConstant);
+    }
+}
+
+class IntermediateLayer : public HelpInterface{
+      HelpInterface * Successor;
+public:
+    IntermediateLayer(HelpInterface * s) {Successor = s;}
+    void getHelp(int iHelpConstant);
+};
+
+void IntermediateLayer::getHelp(int iHelpConstant)
+{
+    if (INTERMEDIATE_LAYER_HELP == iHelpConstant ) {
+        cout<<"This is intermediate layer, nice eh?\n"<<endl;
+    } else {
+        Successor->getHelp(iHelpConstant);
+    }
+}
+
+class Application : public HelpInterface{
+
+public:
+    Application() {}
+    void getHelp(int iHelpConstant) {
+        cout<<"This the application help\n"<<endl;
     }
 };
 
-class ConcreteHandler2 : public Handler {
-public:
-    ConcreteHandler2( Handler* successor = NULL )
-        :Handler( successor ) {
-        }
-    virtual void handleRequest() {
-        if ( NULL != _successor ) {
-            _successor->handleRequest();
-        } else {
-            cout << "handleRequest by ConcreteHandler2" << endl;
-        }
-    }
-};
-
-int main() {
-
-    Handler* handler1 = new ConcreteHandler1();
-    Handler* handler2 = new ConcreteHandler2( handler1 );
-
-    handler2->handleRequest();
+int main()
+{
+    Application *app = new Application();
+    IntermediateLayer *ilayer = new IntermediateLayer(app);
+    FrontEnd * fend = new FrontEnd(ilayer);
+    fend->getHelp(GENERAL_HELP);
+    fend->getHelp(INTERMEDIATE_LAYER_HELP);
 
 
-    return 0;
 }
