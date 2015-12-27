@@ -1,54 +1,38 @@
 #include <iostream>
+#include "robot.h"
+#include "aggressivebehavioral.h"
+#include "defensivebehavioral.h"
+#include "normalbehavioral.h"
+#include "ibehavioral.h"
 using namespace std;
 
-class Strategy {
-public:
-        virtual void AlgorithmInterface() = 0;
-};
+int main()
+{
+    Robot r1("Big Robot");
+    Robot r2("George v.2.1");
+    Robot r3("R2");
 
+    r1.setBehavioralStrategy(new AggressiveBehavioral);
+    r2.setBehavioralStrategy(new DefensiveBehavioral);
+    r3.setBehavioralStrategy(new NormalBehavioral);
 
-class ConcreteStrategyA : public Strategy {
-public:
-        virtual void AlgorithmInterface() {
-                cout << "AlgorithmInterface implemented by ConcreteStrategyA\n" << endl;
-        }
-};
+    r1.move();
+    r2.move();
+    r3.move();
 
+   std::cout<<"\r\nNew behaviours: "<<
+            "\r\n\t'Big Robot' gets really scared"<<
+            "\r\n\t, 'George v.2.1' becomes really mad because"<<
+            "it's always attacked by other robots"<<
+            "\r\n\t and R2 keeps its calm\r\n";
 
-class ConcreteStrategyB : public Strategy {
-public:
-        virtual void AlgorithmInterface() {
-                cout << "AlgorithmInterface implemented by ConcreteStrategyB\n" << endl;
-        }
-};
+    r1.setBehavioralStrategy(new DefensiveBehavioral);
+    r2.setBehavioralStrategy(new AggressiveBehavioral);
 
-class Context {
-public:
-        Context(Strategy* strategy)
-                : _strategy(strategy) {
-        }
+    r1.move();
+    r2.move();
+    r3.move();
 
-        void changeStrategy(Strategy* strategy) {
-                _strategy = strategy;
-        }
-
-        void ContextInterface() {
-                if ( NULL != _strategy) {
-                        _strategy->AlgorithmInterface();
-                }
-        }
-private:
-        Strategy* _strategy;
-};
-
-
-
-int main (int argc, char const* argv[]) {
-
-        Context* context = new Context(new ConcreteStrategyA());
-        context->ContextInterface();
-        context->changeStrategy(new ConcreteStrategyB());
-        context->ContextInterface();
-
-        return 0;
+    return 0;
 }
+

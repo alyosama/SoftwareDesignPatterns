@@ -1,92 +1,148 @@
-#include <iostream>
 #include <string>
-
+#include <iostream>
 using namespace std;
 
-class Window
+class Car
 {
-public:
-  virtual void draw() = 0;
-  virtual string getDescription() = 0;
-  virtual ~Window() {}
+        protected:
+                string _str;
+        public:
+                Car()
+                {
+                        _str = "Unknown Car";
+                }
+
+                virtual string getDescription()
+                {
+                        return _str;
+                }
+
+                virtual double getCost() = 0;
+
+                virtual ~Car()
+                {
+                        cout << "~Car()\n";
+                }
 };
 
-class SimpleWindow : public Window
+class OptionsDecorator : public Car
 {
-public:
-  void draw() {
-    // draw window
-  }
-  string getDescription() {
-      return "simple window\n";
-  }
+        public:
+                virtual string getDescription() = 0;
+
+                virtual ~OptionsDecorator()
+                {
+                        cout<<"~OptionsDecorator()\n";
+                }
 };
 
-class WindowDecorator : public Window
-{
-protected:
-    Window *m_decoratedWindow;
 
-public:
-    WindowDecorator (Window *decoratedWindow):
-      m_decoratedWindow(decoratedWindow) {}
+class CarModel1 : public Car
+{
+        public:
+                CarModel1()
+                {
+                        _str = "CarModel1";
+                }
+                virtual double getCost()
+                {
+                        return 31000.23;
+                }
+
+                ~CarModel1()
+                {
+                        cout<<"~CarModel1()\n";
+                }
 };
 
-class VerticalScrollBarDecorator : public WindowDecorator
+
+class Navigation: public OptionsDecorator
 {
-public:
-    VerticalScrollBarDecorator (Window *decoratedWindow):
-        WindowDecorator(decoratedWindow) {}
+                Car *_b;
+        public:
+                Navigation(Car *b)
+                {
+                        _b = b;
+                }
+                string getDescription()
+                {
+                        return _b->getDescription() + ", Navigation";
+                }
 
-    void draw() {
-        drawVerticalScrollBar();
-        m_decoratedWindow->draw();
-    }
-
-    string getDescription() {
-        return m_decoratedWindow->getDescription() + "with vertical scrollbars\n";
-    }
-
-private:
-    void drawVerticalScrollBar() {
-        // draw the vertical scrollbar
-    }
+                double getCost()
+                {
+                        return 300.56 + _b->getCost();
+                }
+                ~Navigation()
+                {
+                        cout << "~Navigation()\n";
+                }
 };
 
-class HorizontalScrollBarDecorator : public WindowDecorator
+class PremiumSoundSystem: public OptionsDecorator
 {
-public:
-    HorizontalScrollBarDecorator (Window *decoratedWindow):
-        WindowDecorator(decoratedWindow) {}
+                Car *_b;
+        public:
+                PremiumSoundSystem(Car *b)
+                {
+                        _b = b;
+                }
+                string getDescription()
+                {
+                        return _b->getDescription() + ", PremiumSoundSystem";
+                }
 
-    void draw() {
-        drawHorizontalScrollBar();
-        m_decoratedWindow->draw();
-    }
-
-    string getDescription() {
-        return m_decoratedWindow->getDescription() + "with horizontal scrollbars\n";
-    }
-private:
-    void drawHorizontalScrollBar() {
-        // draw the horizontal scrollbar
-    }
+                double getCost()
+                {
+                        return 0.30 + _b->getCost();
+                }
+                ~PremiumSoundSystem()
+                {
+                        cout << "~PremiumSoundSystem()\n";
+                }
 };
+
+class ManualTransmission: public OptionsDecorator
+{
+                Car *_b;
+        public:
+                ManualTransmission(Car *b)
+                {
+                        _b = b;
+                }
+                string getDescription()
+                {
+                return _b->getDescription()+ ", ManualTransmission";
+                }
+
+                double getCost()
+                {
+                        return 0.30 + _b->getCost();
+                }
+                ~ManualTransmission()
+                {
+                        cout << "~ManualTransmission()\n";
+                }
+};
+
+
 
 int main()
 {
-  Window *simple = new SimpleWindow();
-  cout << simple -> getDescription() << endl;
+    //Create our Car that we want to buy
+    Car *b = new CarModel1();
 
-  Window *horiz = new HorizontalScrollBarDecorator ( new SimpleWindow());
-  cout << horiz -> getDescription() << endl;
+    cout << "Base model of " << b->getDescription() << " costs $" << b->getCost() << "\n";
 
-  Window *vert = new VerticalScrollBarDecorator ( new SimpleWindow());
-  cout << vert -> getDescription() << endl;
+    //Who wants base model lets add some more features
 
-  Window *decoratedWindow = new HorizontalScrollBarDecorator (
-                new VerticalScrollBarDecorator(new SimpleWindow()));
-  cout << decoratedWindow -> getDescription() << endl;
+    b = new Navigation(b);
+    cout << b->getDescription() << " will cost you $" << b->getCost() << "\n";
+    b = new PremiumSoundSystem(b);
+    b = new ManualTransmission(b);
+    cout << b->getDescription() << " will cost you $" << b->getCost() << "\n";
 
-  return 0;
+    delete b;
+
+    return 0;
 }

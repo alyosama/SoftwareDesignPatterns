@@ -1,49 +1,90 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <functional>
 
-class Prototype {
-    public:
-        virtual ~Prototype() { }
-        virtual Prototype* clone() const = 0;
-};
+using namespace std;
+const int N = 4;
 
-class ConcreatePrototype: public Prototype {
-    public:
-        ConcreatePrototype(int x)
-            :x_(x) {
-            }
-        ConcreatePrototype(const ConcreatePrototype& p)
-            :x_(p.x_) {
-            }
-        virtual Prototype* clone() const {
-            return new ConcreatePrototype(*this);
-        }
-
-        void setX(int x) {
-            x_ = x;
-        }
-
-        int getX() const {
-            return x_;
-        }
-
-        void printX() const {
-            std::cout << "Value :" << x_ << std::endl;
-        }
-    private:
-        int x_;
+// Prototype
+class Document
+{
+public:
+   virtual Document* clone() const = 0;
+   virtual void store() const = 0;
+   virtual ~Document() { }
 };
 
 
-int main() {
+// Concrete prototypes : xmlDoc, plainDoc, spreadsheetDoc
 
-    Prototype* prototype  = new ConcreatePrototype(1000);
-    for (int i = 1; i < 100; i++) {
-        ConcreatePrototype* tempotype =
-            dynamic_cast<ConcreatePrototype*>(prototype->clone());
-        tempotype->setX(tempotype->getX() * i);
-        tempotype->printX();
+class xmlDoc : public Document
+{
+public:
+   Document*   clone() const { return new xmlDoc; }
+   void store() const { cout << "xmlDoc\n"; }
+};
+
+class plainDoc : public Document
+{
+public:
+   Document* clone() const { return new plainDoc; }
+   void store() const { cout << "plainDoc\n"; }
+};
+
+class spreadsheetDoc : public Document
+{
+public:
+   Document* clone() const { return new spreadsheetDoc; }
+   void store() const { cout << "spreadsheetDoc\n"; }
+};
+
+
+class DocumentManager {
+public:
+   static Document* makeDocument( int choice );
+   ~DocumentManager(){}
+
+private:
+   static Document* mDocTypes[N];
+};
+
+Document* DocumentManager::mDocTypes[] =
+{
+   0, new xmlDoc, new plainDoc, new spreadsheetDoc
+};
+
+Document* DocumentManager::makeDocument( int choice )
+{
+   return mDocTypes[choice]->clone();
+}
+
+// for_each op ()
+struct Destruct
+{
+    void operator()(Document *a) const {
+    delete a;
     }
+};
 
-    return 0;
+// Client
+int main() {
+   vector<Document*> docs(N);
+   int choice;
+   cout << "quit(0), xml(1), plain(2), spreadsheet(3): \n";
+   while (true) {
+      cout << "Type in your choice (0-3)\n";
+      cin >> choice;
+      if (choice <= 0 || choice >= N)
+         break;
+      docs[choice] = DocumentManager::makeDocument( choice );
+   }
 
+   for (int i = 1; i < docs.size(); ++i)
+       if(docs[i]) docs[i]->store();
+
+   Destruct d;
+    for_each(docs.begin(), docs.end(), d);
+
+   return 0;
 }
