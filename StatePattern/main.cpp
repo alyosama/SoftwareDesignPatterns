@@ -9,35 +9,35 @@ public:
         virtual const char* toString() = 0;
 };
 
-class Bamdad : public State {
+class Fagir : public State {
 public:
         virtual void nextState( Sun* sun );
         virtual const char* toString() {
-                return "Bamdad";
+                return "Fagir";
         }
 };
 
-class Chasht : public State {
+class Shroq : public State {
 public:
         virtual void nextState( Sun* sun );
         virtual const char* toString() {
-                return "Chasht";
+                return "Shroq";
         }
 };
 
-class Shamgah : public State {
+class Thohr : public State {
 public:
         virtual void nextState( Sun* sun );
         virtual const char* toString() {
-                return "Shamgah";
+                return "Thohr";
         }
 };
 
-class Shabangah : public State {
+class Asr : public State {
 public:
         virtual void nextState( Sun* sun );
         virtual const char* toString() {
-                return "Shabangah";
+                return "Asr";
         }
 };
 
@@ -63,25 +63,25 @@ private:
         State* _state;
 };
 
-void Bamdad::nextState( Sun* sun ) {
-        sun->changeState( new Chasht() );
+void Fagir::nextState( Sun* sun ) {
+        sun->changeState( new Shroq() );
 }
 
-void Chasht::nextState( Sun* sun ) {
-        sun->changeState( new Shamgah() );
+void Shroq::nextState( Sun* sun ) {
+        sun->changeState( new Thohr() );
 }
 
-void Shamgah::nextState( Sun* sun ) {
-        sun->changeState( new Shabangah() );
+void Thohr::nextState( Sun* sun ) {
+        sun->changeState( new Asr() );
 }
 
-void Shabangah::nextState( Sun* sun ) {
-        sun->changeState( new Bamdad() );
+void Asr::nextState( Sun* sun ) {
+        sun->changeState( new Fagir() );
 }
 
 int main() {
 
-        Sun* sun = new Sun( new Bamdad() );
+        Sun* sun = new Sun( new Fagir() );
         sun->afterSixHours();
         cout << sun->getState() << endl;
 

@@ -1,39 +1,38 @@
 #include <iostream>
 using namespace std;
 
-class Graphic {
+class Node {
 public:
-    virtual void draw() = 0;
+    virtual void open() = 0;
 };
 
-class Image : public Graphic {
+class File : public Node {
 public:
-    Image() {
-        // load image frome disk.
+    File() {
     }
-    virtual void draw() {
-        cout << "Draw real image." << endl;
+    virtual void open() {
+        cout << "Open real File." << endl;
     }
 };
 
-class ProxyImage : public Graphic {
+class Shortcut : public Node {
 public:
-    virtual void draw() {
-        if(_image == NULL) {
-            _image = new Image();
-            cout << "Real image is assigned." << endl;
+    virtual void open() {
+        if(file == NULL) {
+            file = new File();
+            cout << "File is assigned." << endl;
         }
-        _image->draw();
+        file->open();
     }
 private:
-    Image* _image;
+    File* file;
 };
 
 int main() {
 
-    Graphic* proxyImage = new ProxyImage();
-    proxyImage->draw();
-    proxyImage->draw();
-    proxyImage->draw();
+    Node* shortcut = new Shortcut();
+    shortcut->draw();
+    shortcut->draw();
+    shortcut->draw();
     return 0;
 }

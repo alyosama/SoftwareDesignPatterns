@@ -1,51 +1,92 @@
-
 #include <iostream>
+#include <string>
+
 using namespace std;
 
-class Component {
+class Window
+{
 public:
-    virtual void operation() = 0;
+  virtual void draw() = 0;
+  virtual string getDescription() = 0;
+  virtual ~Window() {}
 };
 
-class Decorator : public Component {
+class SimpleWindow : public Window
+{
 public:
-    Decorator( Component* component )
-        :_component( component ) {
-    }
+  void draw() {
+    // draw window
+  }
+  string getDescription() {
+      return "simple window\n";
+  }
+};
+
+class WindowDecorator : public Window
+{
 protected:
-    Component* _component;
+    Window *m_decoratedWindow;
+
+public:
+    WindowDecorator (Window *decoratedWindow):
+      m_decoratedWindow(decoratedWindow) {}
 };
 
-class ConcreteComponent : public Component {
+class VerticalScrollBarDecorator : public WindowDecorator
+{
 public:
-    virtual void operation() {
-        cout << "operation of ConcreteComponent" << endl;
+    VerticalScrollBarDecorator (Window *decoratedWindow):
+        WindowDecorator(decoratedWindow) {}
+
+    void draw() {
+        drawVerticalScrollBar();
+        m_decoratedWindow->draw();
+    }
+
+    string getDescription() {
+        return m_decoratedWindow->getDescription() + "with vertical scrollbars\n";
+    }
+
+private:
+    void drawVerticalScrollBar() {
+        // draw the vertical scrollbar
     }
 };
 
-class ConcreteDecorator : public Decorator {
+class HorizontalScrollBarDecorator : public WindowDecorator
+{
 public:
-    ConcreteDecorator( Component* component )
-        :Decorator( component ) {
+    HorizontalScrollBarDecorator (Window *decoratedWindow):
+        WindowDecorator(decoratedWindow) {}
+
+    void draw() {
+        drawHorizontalScrollBar();
+        m_decoratedWindow->draw();
     }
 
-    virtual void operation() {
-        _component->operation();
-        addedBehavior();
+    string getDescription() {
+        return m_decoratedWindow->getDescription() + "with horizontal scrollbars\n";
     }
 private:
-    void addedBehavior() {
-        cout << "addedBehavior of ConcreteDecorator" << endl;
+    void drawHorizontalScrollBar() {
+        // draw the horizontal scrollbar
     }
 };
 
+int main()
+{
+  Window *simple = new SimpleWindow();
+  cout << simple -> getDescription() << endl;
 
-int main() {
+  Window *horiz = new HorizontalScrollBarDecorator ( new SimpleWindow());
+  cout << horiz -> getDescription() << endl;
 
-    Component* component = new ConcreteComponent();
+  Window *vert = new VerticalScrollBarDecorator ( new SimpleWindow());
+  cout << vert -> getDescription() << endl;
 
-    Decorator* decorator = new ConcreteDecorator( component );
-    decorator->operation();
+  Window *decoratedWindow = new HorizontalScrollBarDecorator (
+                new VerticalScrollBarDecorator(new SimpleWindow()));
+  cout << decoratedWindow -> getDescription() << endl;
 
-    return 0;
+  return 0;
 }

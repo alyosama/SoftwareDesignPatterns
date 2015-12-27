@@ -1,60 +1,81 @@
 #include <iostream>
 using namespace std;
 
-class SubSystemA {
+// Transfer library
+class Usb {
 public:
-    void MethodA() {
-        cout << "SubSystemA.MethodA" << endl;
+    bool isAvailable()
+    {
+        return false;
+    }
+
+    void connect()
+    {
+        cout << "Connecting via USB" << endl;
+    }
+
+    void send(string file)
+    {
+        cout << file << " sent." << endl;
     }
 };
 
-class SubSystemB {
+class Bluetooth {
 public:
-    void MethodB() {
-        cout << "SubSystemB MethodB" << endl;
+    bool isAvailable()
+    {
+        return true;
+    }
+
+    void connect()
+    {
+        cout << "Connecting via BT" << endl;
+    }
+
+    void authenticate()
+    {
+        cout << "Authenticating BT" << endl;
+    }
+
+    void send(string file)
+    {
+        cout << file << " sent." << endl;
     }
 };
 
-class SubSystemC {
+// The Facade
+class FileTransfer {
 public:
-    void MethodC() {
-        cout << "SubSystemC MethodC" << endl;
+    void sendFile(string fileName)
+    {
+        Usb* u = new Usb();
+        Bluetooth* b = new Bluetooth();
+
+
+        if ( u->isAvailable() )
+        {
+            u->connect();
+            u->send(fileName);
+        }
+        else if ( b->isAvailable() )
+        {
+            b->connect();
+            b->authenticate();
+            b->send(fileName);
+        }
+        else
+        {
+            cout << "Not sent" << endl;
+        }
+        delete b;
+        delete u;
     }
 };
 
-
-class Facade {
-private:
-    SubSystemA* subSystemA;
-    SubSystemB* subSystemB;
-    SubSystemC* subSystemC;
-public:
-    Facade() {
-        subSystemA = new SubSystemA();
-        subSystemB = new SubSystemB();
-        subSystemC = new SubSystemC();
-    }
-
-    void MethodOne() {
-        cout << "*** Facade.MethodOne ***" << endl;
-        subSystemA->MethodA();
-        subSystemB->MethodB();
-        subSystemC->MethodC();
-    }
-
-    void MethodTwo() {
-        cout << "*** Facade.MethodTwo ***" << endl;
-        subSystemC->MethodC();
-        subSystemA->MethodA();
-    }
-
-};
-int main() {
-
-    Facade* facade = new Facade();
-
-    facade->MethodOne();
-    facade->MethodTwo();
-
-    return 0;
+// Test Program
+int main()
+{
+    FileTransfer* ft = new FileTransfer();
+    ft->sendFile("mypicture");
+    delete ft;
 }

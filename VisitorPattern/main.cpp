@@ -1,6 +1,3 @@
-/*
- * Adopted from http://stackoverflow.com/a/255300/225052
- */
 
 #include <iostream>
 using namespace std;
